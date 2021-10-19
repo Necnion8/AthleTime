@@ -164,7 +164,7 @@ public class ParkourPlayer {
                     pPlayer.player.playSound(pPlayer.getPlayer().getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, .5f, 1);
                 }),
                 new ParkourItem(5, makeItem(Material.RED_BED, ChatColor.RED + "キャンセル"), (pPlayer) -> {
-                    players.cancelParkour(pPlayer, false);
+                    players.cancelParkour(pPlayer, true);
                     pPlayer.player.playSound(pPlayer.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 2);
                 })
         };

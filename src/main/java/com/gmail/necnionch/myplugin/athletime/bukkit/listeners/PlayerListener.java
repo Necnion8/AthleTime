@@ -230,6 +230,17 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOW)
+    public void onVoid(PlayerMoveEvent event) {
+        if (event.getTo() == null || 0 < event.getTo().getY())
+            return;
+        ParkourPlayer parkourPlayer = players.get(event.getPlayer());
+        if (parkourPlayer != null) {
+            parkourPlayer.safeTeleport(parkourPlayer.getLastPoint());
+            parkourPlayer.getPlayer().playSound(parkourPlayer.getPlayer().getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, .5f, 1.5f);
+        }
+    }
+
     private <T extends Event> boolean callEvent(T event) {
         owner.getServer().getPluginManager().callEvent(event);
         return event instanceof Cancellable && ((Cancellable) event).isCancelled();
