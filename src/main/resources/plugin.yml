@@ -1,0 +1,25 @@
+name: AthleTime
+version: '${version}'
+main: com.gmail.necnionch.myplugin.athletime.bukkit.AthleTimePlugin
+api-version: 1.13
+softdepend: [ Citizens ]
+authors: [ Necnion8 ]
+
+commands:
+  athletime: {}
+
+permissions:
+  athletime.command.list: {}
+  athletime.command.add: {}
+  athletime.command.remove: {}
+  athletime.command.setup: {}
+  athletime.command.refreshnpc: {}
+
+  athletime.admin:
+    children:
+      - athletime.command.list
+      - athletime.command.add
+      - athletime.command.remove
+      - athletime.command.setup
+      - athletime.command.refreshnpc
+    default: op
