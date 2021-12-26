@@ -52,7 +52,8 @@ public class BukkitConfigDriver {
 
             if (!file.exists()) {
                 file.createNewFile();
-                try (InputStream inputStream = plugin.getResource(resourceFileName); OutputStream outputStream = new FileOutputStream(file)) {
+                try (InputStream inputStream = plugin.getResource(resourceFileName);
+                     OutputStream outputStream = new FileOutputStream(file)) {
                     ByteStreams.copy(inputStream, outputStream);
                 }
             }

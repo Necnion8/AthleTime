@@ -18,9 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -87,7 +85,11 @@ public class CitizensNPC {
 
         boolean changedSetting = false;
 
-        for (ParkourRankNPC npc : parkour.rankNPCs().values()) {
+        List<ParkourRankNPC> npcs = parkour.rankNPCs().entrySet().stream()
+                .sorted(Comparator.comparingInt(Map.Entry::getKey))
+                .map(Map.Entry::getValue).collect(Collectors.toList());
+
+        for (ParkourRankNPC npc : npcs) {
             if (updateNPC(npc, (records.isEmpty()) ? null : records.remove(0)))
                 changedSetting = true;
         }
