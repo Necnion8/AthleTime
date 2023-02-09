@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.gmail.necnionch.myplugin'
-version = '1.0.2'
+version = '1.0.3'
 
 repositories {
     mavenCentral()
@@ -16,18 +16,13 @@ repositories {
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
 
-    maven {
-        url = "https://repo.citizensnpcs.co"
-    }
-
 }
 
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT'
     implementation "org.jetbrains:annotations:20.1.0"
 
-
-    implementation "net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT"
+    implementation files("libs/Citizens-2.0.30-b2908.jar")
 
 }
 
