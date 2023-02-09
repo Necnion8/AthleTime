@@ -98,6 +98,9 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
+        if (PlayerTeleportEvent.TeleportCause.COMMAND.equals(event.getCause()))
+            return;
+
         ParkourPlayer parkourPlayer = players.get(event.getPlayer());
         if (parkourPlayer != null && event.getTo() != null && !event.getTo().equals(parkourPlayer.getSafeTeleportLocation())) {
             cancelParkour(parkourPlayer, true);
