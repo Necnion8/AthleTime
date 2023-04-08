@@ -8,7 +8,6 @@ import com.gmail.necnionch.myplugin.athletime.bukkit.record.Record;
 import com.gmail.necnionch.myplugin.athletime.bukkit.record.RecordContainer;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRemoveByCommandSenderEvent;
-import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.trait.HologramTrait;
@@ -18,7 +17,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 

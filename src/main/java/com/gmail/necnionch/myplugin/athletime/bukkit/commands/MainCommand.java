@@ -8,9 +8,9 @@ import com.gmail.necnionch.myplugin.athletime.bukkit.command.errors.CommandError
 import com.gmail.necnionch.myplugin.athletime.bukkit.command.errors.NotFoundCommandError;
 import com.gmail.necnionch.myplugin.athletime.bukkit.command.errors.PermissionCommandError;
 import com.gmail.necnionch.myplugin.athletime.bukkit.hooks.CitizensNPC;
+import com.gmail.necnionch.myplugin.athletime.bukkit.listeners.SetupHandler;
 import com.gmail.necnionch.myplugin.athletime.bukkit.parkour.Parkour;
 import com.gmail.necnionch.myplugin.athletime.bukkit.parkour.ParkourContainer;
-import com.gmail.necnionch.myplugin.athletime.bukkit.listeners.SetupHandler;
 import com.gmail.necnionch.myplugin.athletime.bukkit.parkour.ParkourPoint;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -26,7 +26,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static com.gmail.necnionch.myplugin.athletime.bukkit.AthleTimePlugin.makeMessage;
