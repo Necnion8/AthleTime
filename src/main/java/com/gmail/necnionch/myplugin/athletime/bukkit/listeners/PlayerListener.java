@@ -28,7 +28,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
 
 import static com.gmail.necnionch.myplugin.athletime.bukkit.AthleTimePlugin.makeMessage;
@@ -310,8 +309,8 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
 
     @Override
     public void cancelAll() {
-        for (Iterator<ParkourPlayer> it = players.values().iterator(); it.hasNext(); ) {
-            cancelParkour(it.next(), true);
+        for (ParkourPlayer parkourPlayer : getAll()) {
+            cancelParkour(parkourPlayer, true);
         }
     }
 
