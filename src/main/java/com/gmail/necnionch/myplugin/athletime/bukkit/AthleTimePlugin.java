@@ -24,6 +24,7 @@ import java.util.Objects;
 public final class AthleTimePlugin extends JavaPlugin {
     public static final BaseComponent[] PREFIX = TextComponent.fromLegacyText("§7[§6Athle§7] ");
 
+    private final MainConfig mainConfig = new MainConfig(this);
     private final ParkourContainer container = new ParkourContainer(this);
     private final RecordContainer records = new RecordContainer(this);
     private final CitizensNPC citizens = new CitizensNPC(this, container, records);
@@ -33,6 +34,7 @@ public final class AthleTimePlugin extends JavaPlugin {
     public void onEnable() {
         PluginManager mgr = getServer().getPluginManager();
 
+        mainConfig.load();
         container.load();
         records.load();
 
@@ -68,6 +70,10 @@ public final class AthleTimePlugin extends JavaPlugin {
         return true;
     }
 
+
+    public MainConfig getMainConfig() {
+        return mainConfig;
+    }
 
     public ParkourContainer getContainer() {
         return container;
