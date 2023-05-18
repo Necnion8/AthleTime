@@ -17,7 +17,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -91,14 +90,15 @@ public class CitizensNPC {
                 .sorted(Comparator.comparingInt(Map.Entry::getKey))
                 .map(Map.Entry::getValue).collect(Collectors.toList());
 
+        int rank = 1;
         for (ParkourRankNPC npc : npcs) {
-            if (updateNPC(npc, (records.isEmpty()) ? null : records.remove(0)))
+            if (updateNPC(npc, (records.isEmpty()) ? null : records.remove(0), rank++))
                 changedSetting = true;
         }
         return changedSetting;
     }
 
-    public boolean updateNPC(ParkourRankNPC rankNPC, Record record) {
+    public boolean updateNPC(ParkourRankNPC rankNPC, Record record, int rank) {
         if (!isHooked())
             throw new IllegalStateException("Citizens not hooked!");
 
@@ -115,44 +115,30 @@ public class CitizensNPC {
             }
         }
 
-
-        boolean changedSetting = false;
-
         HologramTrait hologram = npc.getTraitNullable(HologramTrait.class);
         if (hologram != null) {
-            // check current format
-            List<String> hologramLines = hologram.getLines();
-            String format = String.join("\n", hologramLines);
-            if (format.contains("{player}") || format.contains("{time}")) {
-                // found: new format
-                rankNPC.setHologramLines(hologramLines.toArray(new String[0]));
-                changedSetting = true;
+            List<String> npcHologramLines = plugin.getMainConfig().npcHologramLines();
 
-            } else if (rankNPC.getHologramLines() != null) {
-                // using saved format
-                format = String.join("\n", rankNPC.getHologramLines());
-
-            } else {
-                return false;
-            }
-
-            // format
-            String lines = format
+            String lines = (1 <= rank && rank <= npcHologramLines.size()) ? npcHologramLines.get(rank - 1)
                     .replaceAll("\\{time}", (record != null) ? record.getFormattedTime() : "§7N/A")
-                    .replaceAll("\\{player}", (record != null) ? record.getPlayerName() : "§7N/A");
+                    .replaceAll("\\{player}", (record != null) ? record.getPlayerName() : "§7N/A") : null;
 
             // 遅延をいれないと見えなくなる。内部的に行われるNPCRemoveとタイミングを少しずらさないといけない？
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                hologramLines.clear();
-                hologramLines.addAll(Arrays.asList(lines.split("\n")));
+                hologram.clear();
+                if (lines != null) {
+                    String[] split = lines.split("\n");
+                    for (int i = 0; i < split.length; i++) {
+                        hologram.addLine(split[split.length - i - 1]);
+                    }
+                }
 
                 hologram.onDespawn();
                 hologram.onSpawn();
             }, 1);
-
         }
 
-        return changedSetting;
+        return true;
     }
 
 

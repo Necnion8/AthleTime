@@ -19,10 +19,12 @@ public class ParkourRankNPC {
         return npcId;
     }
 
+    @Deprecated
     public void setHologramLines(String[] hologramLines) {
         this.hologramLines = (hologramLines != null) ? String.join("\n", hologramLines) : null;
     }
 
+    @Deprecated
     public String[] getHologramLines() {
         return (hologramLines != null) ? hologramLines.split("\n") : null;
     }
