@@ -1,6 +1,7 @@
 package com.gmail.necnionch.myplugin.athletime.bukkit.listeners;
 
 import com.gmail.necnionch.myplugin.athletime.bukkit.AthleTimePlugin;
+import com.gmail.necnionch.myplugin.athletime.common.Util;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -10,7 +11,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.EquipmentSlot;
 
 
 public abstract class SetupHandler {
@@ -46,7 +46,7 @@ public abstract class SetupHandler {
             if (!player.equals(event.getPlayer()))
                 return;
 
-            if (!EquipmentSlot.HAND.equals(event.getHand()))
+            if (!Util.isMainHand(event))
                 return;
 
             Block block = event.getClickedBlock();

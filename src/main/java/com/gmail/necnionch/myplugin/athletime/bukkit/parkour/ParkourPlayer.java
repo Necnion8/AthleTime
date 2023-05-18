@@ -1,6 +1,8 @@
 package com.gmail.necnionch.myplugin.athletime.bukkit.parkour;
 
 import com.gmail.necnionch.myplugin.athletime.bukkit.ParkourPlayerAPI;
+import com.gmail.necnionch.myplugin.athletime.common.LegacyItemTypes;
+import com.gmail.necnionch.myplugin.athletime.common.LegacySounds;
 import com.google.common.collect.Lists;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -155,17 +157,17 @@ public class ParkourPlayer {
 
     public static ParkourItem[] makeParkourItems(ParkourPlayerAPI players) {
         return new ParkourItem[] {
-                new ParkourItem(3, makeItem(Material.LIGHT_WEIGHTED_PRESSURE_PLATE, ChatColor.GREEN + "チェックポイントへ戻る"), (pPlayer) -> {
+                new ParkourItem(3, makeItem(LegacyItemTypes.GOLD_PLATE.getType(), ChatColor.GREEN + "チェックポイントへ戻る"), (pPlayer) -> {
                     pPlayer.safeTeleport(pPlayer.lastPoint, 1.5);
-                    pPlayer.player.playSound(pPlayer.getPlayer().getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, .5f, 1.5f);
+                    pPlayer.player.playSound(pPlayer.getPlayer().getLocation(), LegacySounds.ENTITY_ENDERMAN_TELEPORT.getType(), .5f, 1.5f);
                 }).focus(true),
-                new ParkourItem(4, makeItem(Material.OAK_DOOR, ChatColor.GOLD + "スタート地点へ戻る"), (pPlayer) -> {
+                new ParkourItem(4, makeItem(LegacyItemTypes.OAK_DOOR.getType(), ChatColor.GOLD + "スタート地点へ戻る"), (pPlayer) -> {
                     pPlayer.safeTeleport(pPlayer.startPoint, 1.5);
-                    pPlayer.player.playSound(pPlayer.getPlayer().getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, .5f, 1);
+                    pPlayer.player.playSound(pPlayer.getPlayer().getLocation(), LegacySounds.ENTITY_ENDERMAN_TELEPORT.getType(), .5f, 1);
                 }),
-                new ParkourItem(5, makeItem(Material.RED_BED, ChatColor.RED + "キャンセル"), (pPlayer) -> {
+                new ParkourItem(5, makeItem(LegacyItemTypes.RED_BED.getType(), ChatColor.RED + "キャンセル"), (pPlayer) -> {
                     players.cancelParkour(pPlayer, true);
-                    pPlayer.player.playSound(pPlayer.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 2);
+                    pPlayer.player.playSound(pPlayer.getPlayer().getLocation(), LegacySounds.ENTITY_ARROW_HIT_PLAYER.getType(), 1, 2);
                 })
         };
     }

@@ -7,8 +7,8 @@ import com.gmail.necnionch.myplugin.athletime.bukkit.listeners.PlayerListener;
 import com.gmail.necnionch.myplugin.athletime.bukkit.parkour.Parkour;
 import com.gmail.necnionch.myplugin.athletime.bukkit.parkour.ParkourContainer;
 import com.gmail.necnionch.myplugin.athletime.bukkit.record.RecordContainer;
+import com.gmail.necnionch.myplugin.athletime.common.Util;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -37,6 +37,8 @@ public final class AthleTimePlugin extends JavaPlugin {
         records.load();
 
         mgr.registerEvents(listener, this);
+        if (!Util.isLegacy_v1_8())
+            mgr.registerEvents(listener.init_v1_9_listener(), this);
 
         CommandBukkit.register(new MainCommand(this, container), Objects.requireNonNull(getCommand("athletime")));
 
@@ -85,10 +87,13 @@ public final class AthleTimePlugin extends JavaPlugin {
 
 
     public static BaseComponent[] makeMessage(net.md_5.bungee.api.ChatColor color, String message) {
-        ComponentBuilder builder = new ComponentBuilder("");
-        builder.append(AthleTimePlugin.PREFIX);
-        builder.append(message).color(color);
-        return builder.create();
+        BaseComponent[] parts = new BaseComponent[AthleTimePlugin.PREFIX.length + 1];
+        System.arraycopy(AthleTimePlugin.PREFIX, 0, parts, 0, AthleTimePlugin.PREFIX.length);
+
+        TextComponent m = new TextComponent(message);
+        m.setColor(color);
+        parts[AthleTimePlugin.PREFIX.length] = m;
+        return parts;
     }
 
     public static boolean isPressurePlate(Material material) {
@@ -103,6 +108,17 @@ public final class AthleTimePlugin extends JavaPlugin {
             case JUNGLE_PRESSURE_PLATE:
             case SPRUCE_PRESSURE_PLATE:
                 return true;
+            default: {
+                if (Util.isLegacy_v1_8()) {
+                    switch (material.name()) {
+                        case "GOLD_PLATE":
+                        case "IRON_PLATE":
+                        case "STONE_PLATE":
+                        case "WOOD_PLATE":
+                            return true;
+                    }
+                }
+            }
         }
         return false;
     }

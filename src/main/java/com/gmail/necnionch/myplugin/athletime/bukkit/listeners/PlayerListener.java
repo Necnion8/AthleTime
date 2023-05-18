@@ -10,10 +10,15 @@ import com.gmail.necnionch.myplugin.athletime.bukkit.hooks.CitizensNPC;
 import com.gmail.necnionch.myplugin.athletime.bukkit.parkour.*;
 import com.gmail.necnionch.myplugin.athletime.bukkit.record.Record;
 import com.gmail.necnionch.myplugin.athletime.bukkit.record.RecordContainer;
+import com.gmail.necnionch.myplugin.athletime.common.LegacySounds;
+import com.gmail.necnionch.myplugin.athletime.common.Util;
 import com.google.common.collect.Maps;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
@@ -23,7 +28,6 @@ import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,6 +39,7 @@ import static com.gmail.necnionch.myplugin.athletime.bukkit.AthleTimePlugin.make
 
 public class PlayerListener implements Listener, ParkourPlayerAPI {
     private final AthleTimePlugin owner;
+    private Listener_v1_9 v1_9Listener = null;
     private final ParkourContainer container;
     private final RecordContainer records;
     private final CitizensNPC citizens;
@@ -46,6 +51,12 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
         this.container = container;
         this.records = records;
         this.citizens = citizens;
+    }
+
+    public Listener_v1_9 init_v1_9_listener() {
+        if (v1_9Listener == null)
+            v1_9Listener = new Listener_v1_9();
+        return v1_9Listener;
     }
 
     // parkour
@@ -113,7 +124,7 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onRightClick(PlayerInteractEvent event) {
-        if (!EquipmentSlot.HAND.equals(event.getHand()))
+        if (!Util.isMainHand(event))
             return;
         switch (event.getAction()) {
             case RIGHT_CLICK_BLOCK:
@@ -183,24 +194,6 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onSwap(PlayerSwapHandItemsEvent event) {
-        ParkourPlayer pPlayer = players.get(event.getPlayer());
-        if (pPlayer == null)
-            return;
-
-        ItemStack main = event.getMainHandItem();
-        ItemStack off = event.getOffHandItem();
-
-        for (ParkourItem pItem : pPlayer.parkourItems()) {
-            if ((main != null && main.equals(pItem.getItemStack()))
-                    || (off != null && off.equals(pItem.getItemStack()))) {
-                event.setCancelled(true);
-                return;
-            }
-        }
-    }
-
     //
 
     @EventHandler
@@ -241,7 +234,7 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
         ParkourPlayer parkourPlayer = players.get(event.getPlayer());
         if (parkourPlayer != null) {
             parkourPlayer.safeTeleport(parkourPlayer.getLastPoint());
-            parkourPlayer.getPlayer().playSound(parkourPlayer.getPlayer().getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, .5f, 1.5f);
+            parkourPlayer.getPlayer().playSound(parkourPlayer.getPlayer().getLocation(), LegacySounds.ENTITY_ENDERMAN_TELEPORT.getType(), .5f, 1.5f);
         }
     }
 
@@ -261,7 +254,7 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
             return;
 
         pPlayer.setLastPoint(point);
-        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_PICKUP, 1, 1);
+        player.playSound(player.getLocation(), LegacySounds.ENTITY_ITEM_PICKUP.getType(), 1, 1);
         player.spigot().sendMessage(makeMessage(ChatColor.YELLOW, "チェックポイント！"));
     }
 
@@ -269,7 +262,7 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
         if (callEvent(new PlayerParkourEndEvent(pPlayer, point, event)))
             return;
 
-        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
+        player.playSound(player.getLocation(), LegacySounds.ENTITY_PLAYER_LEVELUP.getType(), 1, 2);
         stopParkour(pPlayer);
 
         Record record = new Record(player.getUniqueId(), player.getName(), pPlayer.getCurrentTime());
@@ -323,7 +316,7 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
             if (teleport)
                 player.safeTeleport(player.getStartPoint(), 1.5);
 
-            player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.ENTITY_ITEM_PICKUP, 1, 0);
+            player.getPlayer().playSound(player.getPlayer().getLocation(), LegacySounds.ENTITY_ITEM_PICKUP.getType(), 1, 0);
             player.getPlayer().spigot().sendMessage(makeMessage(ChatColor.RED, "パルクールを中止します"));
         }
     }
@@ -354,10 +347,31 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
         players.put(player, parkourPlayer);
 
 
-        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 2);
+        player.playSound(player.getLocation(), LegacySounds.ENTITY_EXPERIENCE_ORB_PICKUP.getType(), 1, 2);
         player.spigot().sendMessage(makeMessage(ChatColor.GOLD, "パルクールスタート！"));
 
         return parkourPlayer;
+    }
+
+
+    public class Listener_v1_9 implements Listener {
+        @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+        public void onSwap(PlayerSwapHandItemsEvent event) {
+            ParkourPlayer pPlayer = players.get(event.getPlayer());
+            if (pPlayer == null)
+                return;
+
+            ItemStack main = event.getMainHandItem();
+            ItemStack off = event.getOffHandItem();
+
+            for (ParkourItem pItem : pPlayer.parkourItems()) {
+                if ((main != null && main.equals(pItem.getItemStack()))
+                        || (off != null && off.equals(pItem.getItemStack()))) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
     }
 
 }
