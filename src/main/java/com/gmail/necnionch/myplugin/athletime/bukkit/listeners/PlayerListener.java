@@ -29,6 +29,8 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -287,6 +289,7 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
         if (players.remove(player.getPlayer()) != null) {
             player.removeParkourItems();
             player.restoreInventoryItems();
+            player.getPlayer().removePotionEffect(PotionEffectType.NIGHT_VISION);
         }
     }
 
@@ -349,6 +352,7 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
 
         player.playSound(player.getLocation(), LegacySounds.ENTITY_EXPERIENCE_ORB_PICKUP.getType(), 1, 2);
         player.spigot().sendMessage(makeMessage(ChatColor.GOLD, "パルクールスタート！"));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false), true);
 
         return parkourPlayer;
     }
