@@ -31,6 +31,7 @@ public class ParkourPlayer {
     private Collection<PotionEffect> activePotionEffects;
 
     private Location safeTeleportLocation;
+    private List<PotionEffect> potionEffects;
 
 
     public ParkourPlayer(Player player, Parkour parkour, ParkourPoint first) {
@@ -116,6 +117,26 @@ public class ParkourPlayer {
                     .collect(Collectors.toList());
             effects.forEach(player::removePotionEffect);
             player.addPotionEffects(activePotionEffects);
+        }
+    }
+
+
+    public void startPotionEffect() {
+        potionEffects = player.getActivePotionEffects().stream()
+                .map(pot -> new PotionEffect(pot.serialize()))
+                .collect(Collectors.toList());
+
+        player.getActivePotionEffects().stream()
+                .map(PotionEffect::getType)
+                .forEach(player::removePotionEffect);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, false, false), true);
+    }
+
+    public void stopPotionEffect() {
+        player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+        if (potionEffects != null) {
+            potionEffects.forEach(pot -> player.addPotionEffect(pot, true));
+            potionEffects = null;
         }
     }
 
