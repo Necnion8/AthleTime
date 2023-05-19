@@ -35,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.gmail.necnionch.myplugin.athletime.bukkit.AthleTimePlugin.makeMessage;
 
@@ -261,7 +262,19 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
     }
 
     private void onEndPoint(ParkourPlayer pPlayer, Player player, ParkourPoint point, PlayerInteractEvent event) {
-        if (callEvent(new PlayerParkourEndEvent(pPlayer, point, event)))
+        Location finishPosition = pPlayer.getParkour().getFinishTeleportPosition();
+        if (finishPosition != null) {
+            finishPosition = finishPosition.clone();
+            World world = owner.getServer().getWorld(pPlayer.getParkour().getWorldName());
+            if (world != null) {
+                finishPosition.setWorld(world);
+            } else {
+                finishPosition = null;
+            }
+        }
+
+        PlayerParkourEndEvent endEvent = new PlayerParkourEndEvent(pPlayer, point, event, finishPosition);
+        if (callEvent(endEvent))
             return;
 
         stopParkour(pPlayer);
@@ -277,16 +290,7 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
         }
         player.spigot().sendMessage(message);
 
-        Location finishPosition = pPlayer.getParkour().getFinishTeleportPosition();
-        if (finishPosition != null) {
-            finishPosition = finishPosition.clone();
-            World world = owner.getServer().getWorld(pPlayer.getParkour().getWorldName());
-            if (world != null) {
-                finishPosition.setWorld(world);
-                player.teleport(finishPosition);
-            }
-        }
-
+        Optional.ofNullable(endEvent.getMoveLocation()).ifPresent(player::teleport);
         player.playSound(player.getLocation(), LegacySounds.ENTITY_PLAYER_LEVELUP.getType(), 1, 2);
 
 

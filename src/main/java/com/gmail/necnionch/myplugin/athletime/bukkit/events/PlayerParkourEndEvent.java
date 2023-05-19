@@ -2,6 +2,7 @@ package com.gmail.necnionch.myplugin.athletime.bukkit.events;
 
 import com.gmail.necnionch.myplugin.athletime.bukkit.parkour.ParkourPlayer;
 import com.gmail.necnionch.myplugin.athletime.bukkit.parkour.ParkourPoint;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -15,13 +16,15 @@ public class PlayerParkourEndEvent extends ParkourPointEvent implements Cancella
 
     private final ParkourPlayer player;
     private final PlayerInteractEvent baseEvent;
+    private @Nullable Location moveLocation;
 
     private boolean cancelled;
 
-    public PlayerParkourEndEvent(ParkourPlayer player, ParkourPoint point, @Nullable PlayerInteractEvent baseEvent) {
+    public PlayerParkourEndEvent(ParkourPlayer player, ParkourPoint point, @Nullable PlayerInteractEvent baseEvent, @Nullable Location moveLocation) {
         super(player.getParkour(), point);
         this.player = player;
         this.baseEvent = baseEvent;
+        this.moveLocation = moveLocation;
     }
 
     public Player getPlayer() {
@@ -36,6 +39,13 @@ public class PlayerParkourEndEvent extends ParkourPointEvent implements Cancella
         return baseEvent;
     }
 
+    public @Nullable Location getMoveLocation() {
+        return moveLocation;
+    }
+
+    public void setMoveLocation(@Nullable Location location) {
+        this.moveLocation = location;
+    }
 
     @Override
     public boolean isCancelled() {
