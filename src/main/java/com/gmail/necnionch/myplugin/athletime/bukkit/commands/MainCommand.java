@@ -58,6 +58,8 @@ public class MainCommand extends RootCommand {
         setupCommands.addCommand("clearpoints", null, this::execSetupClearPoints);
         setupCommands.addCommand("setranknpc", null, this::execSetupSetRankNPC, this::genSetupSetRankNPC);
         setupCommands.addCommand("clearranknpcs", null, this::execSetupClearRankNPCs);
+        setupCommands.addCommand("setfinishedposition", null, this::execSetupSetFinishTeleportPosition);
+        setupCommands.addCommand("unsetfinishedposition", null, this::execSetupUnsetFinishTeleportPosition);
 
         /*
         /athletime help
@@ -420,6 +422,35 @@ public class MainCommand extends RootCommand {
             citizens.updateNPC(parkour);
         } else {
             s.sendMessage(makeMessage(ChatColor.RED, "すでに追加されています。"));
+        }
+    }
+
+    private void execSetupSetFinishTeleportPosition(CommandSender s, List<String> args) {
+        Parkour parkour = container.get(args.remove(0));
+        if (parkour == null)
+            throw new NotFoundParkour();
+
+        Player player = (Player) s.getSender();
+
+        Location location = player.getLocation();
+        location = cloneXYZYaw(location, location.getYaw());
+        parkour.setFinishTeleportPosition(location);
+
+        s.sendMessage(makeMessage(ChatColor.GOLD, "ゴール後のテレポート先地点を現在地に設定しました。"));
+        container.put(parkour);
+    }
+
+    private void execSetupUnsetFinishTeleportPosition(CommandSender s, List<String> args) {
+        Parkour parkour = container.get(args.remove(0));
+        if (parkour == null)
+            throw new NotFoundParkour();
+
+        if (parkour.getFinishTeleportPosition() != null) {
+            parkour.setFinishTeleportPosition(null);
+            s.sendMessage(makeMessage(ChatColor.GOLD, "ゴール後のテレポートを無効にしました。"));
+            container.put(parkour);
+        } else {
+            s.sendMessage(makeMessage(ChatColor.RED, "ゴール後のテレポートは設定されていません。"));
         }
     }
 

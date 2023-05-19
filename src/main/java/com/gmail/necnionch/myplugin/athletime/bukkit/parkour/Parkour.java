@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public class Parkour {
     private final List<Location> checkPoints;
     private final List<Location> endPoints;
     private final Map<Integer, ParkourRankNPC> rankNPCs;
+    private @Nullable Location finishTeleportPosition;
 
 
     public Parkour(String name, String worldName, List<Location> startPoints, List<Location> checkPoints, List<Location> endPoints, Map<Integer, ParkourRankNPC> rankNPCs) {
@@ -70,6 +72,14 @@ public class Parkour {
         return npc;
     }
 
+    public @Nullable Location getFinishTeleportPosition() {
+        return finishTeleportPosition;
+    }
+
+    public void setFinishTeleportPosition(@Nullable Location location) {
+        this.finishTeleportPosition = location;
+    }
+
     public static Parkour fromConfig(String name, ConfigurationSection config) {
         Parkour parkour = new Parkour(name);
         parkour.worldName = config.getString("world");
@@ -113,6 +123,16 @@ public class Parkour {
             }
             parkour.rankNPCs.put(npc.getNPCId(), npc);
         }
+
+        String finishToTeleportPosition = config.getString("finish-to-teleport");
+        if (finishToTeleportPosition != null) {
+            String[] split = finishToTeleportPosition.split(",", 4);
+            int x = Integer.parseInt(split[0]);
+            int y = Integer.parseInt(split[1]);
+            int z = Integer.parseInt(split[2]);
+            float direction = Float.parseFloat(split[3]);
+            parkour.finishTeleportPosition = new Location(null, x, y, z, direction, 0);
+        }
         return parkour;
     }
 
@@ -123,6 +143,13 @@ public class Parkour {
         config.put("check-points", checkPoints.stream().map(l -> l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ() + "," + l.getYaw()).collect(Collectors.toList()));
         config.put("end-points", endPoints.stream().map(l -> l.getBlockX() + "," + l.getBlockY() + "," + l.getBlockZ() + "," + l.getYaw()).collect(Collectors.toList()));
         config.put("rank-npc", rankNPCs.values().stream().map(ParkourRankNPC::toConfig).collect(Collectors.toList()));
+
+        if (finishTeleportPosition != null) {
+            config.put("finish-to-teleport", finishTeleportPosition.getBlockX() + "," +
+                    finishTeleportPosition.getBlockY() + "," +
+                    finishTeleportPosition.getBlockZ() + "," +
+                    finishTeleportPosition.getYaw());
+        }
         return config;
     }
 

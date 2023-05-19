@@ -264,7 +264,6 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
         if (callEvent(new PlayerParkourEndEvent(pPlayer, point, event)))
             return;
 
-        player.playSound(player.getLocation(), LegacySounds.ENTITY_PLAYER_LEVELUP.getType(), 1, 2);
         stopParkour(pPlayer);
 
         Record record = new Record(player.getUniqueId(), player.getName(), pPlayer.getCurrentTime());
@@ -277,6 +276,18 @@ public class PlayerListener implements Listener, ParkourPlayerAPI {
             message = makeMessage(ChatColor.GOLD, record.getFormattedTime() + " でクリアしました！");
         }
         player.spigot().sendMessage(message);
+
+        Location finishPosition = pPlayer.getParkour().getFinishTeleportPosition();
+        if (finishPosition != null) {
+            finishPosition = finishPosition.clone();
+            World world = owner.getServer().getWorld(pPlayer.getParkour().getWorldName());
+            if (world != null) {
+                finishPosition.setWorld(world);
+                player.teleport(finishPosition);
+            }
+        }
+
+        player.playSound(player.getLocation(), LegacySounds.ENTITY_PLAYER_LEVELUP.getType(), 1, 2);
 
 
         if (newRecord && citizens.updateNPC(pPlayer.getParkour()))
