@@ -60,19 +60,6 @@ public class MainCommand extends RootCommand {
         setupCommands.addCommand("clearranknpcs", null, this::execSetupClearRankNPCs);
         setupCommands.addCommand("setfinishedposition", null, this::execSetupSetFinishTeleportPosition);
         setupCommands.addCommand("unsetfinishedposition", null, this::execSetupUnsetFinishTeleportPosition);
-
-        /*
-        /athletime help
-        /athletime list
-        /athletime add (parkourName)
-        /athletime remove (parkourName)
-        /athletime setup (parkourName) startpoint
-        /athletime setup (parkourName) checkpoint
-        /athletime setup (parkourName) endpoint
-        /athletime setup (parkourName) clearpoints
-        /athletime setup (parkourName) setnpc
-        /athletime setup (parkourName) clearnpcs
-         */
     }
 
 
@@ -479,10 +466,6 @@ public class MainCommand extends RootCommand {
     }
 
 
-
-
-
-
     private Location cloneXYZYaw(Location location, float yaw) {
         return new Location(null, location.getX(), location.getY(), location.getZ(), roundYaw(yaw), 0);
     }
@@ -513,6 +496,5 @@ public class MainCommand extends RootCommand {
         }
         sender.sendMessage(makeMessage(ChatColor.RED, "エラー: " + message));
     }
-
 
 }
